@@ -192,7 +192,7 @@ namespace Security
             {
                 A = s[j] = BitOperations.RotateLeft(s[i] + A + B, 3);
                 B = l[i] = BitOperations.RotateLeft(l[i] + A + B, (int)(A + B));
-                i = (i + i) % l.Length;
+                i = (i + 1) % l.Length;
                 j = (j + 1) % t;
             }
             Console.WriteLine(s.Length);
