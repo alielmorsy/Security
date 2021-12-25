@@ -74,7 +74,7 @@ namespace Security
             {
                 t = BitOperations.RotateLeft(B * (2 * B + 1), lgw);
                 u = BitOperations.RotateLeft(D * (2 * D + 1), lgw);
-
+                
                 A = BitOperations.RotateLeft(A ^ t, (int)u) + s[2 * i];
                 C = BitOperations.RotateLeft(C ^ u, (int)t) + s[2 * i + 1];
 
@@ -87,12 +87,7 @@ namespace Security
 
             A += s[2 * _roundOfRotation + 2];
             C += s[2 * _roundOfRotation + 3];
-            data[0] = A;
-            data[1] = B;
-            data[2] = C;
-            data[3] = D;
-
-
+            
             return $"{A:x}{B:x}{C:x}{D:x}".ToUpper();
         }
 
@@ -121,17 +116,14 @@ namespace Security
 
             D -= s[1];
             B -= s[0];
-            data[0] = A;
-            data[1] = B;
-            data[2] = C;
-            data[3] = D;
+        
             return $"{A:x}{B:x}{C:x}{D:x}".ToUpper();
         }
 
         private uint[] CreateRegisters(string text)
         {
-            byte[] input = Encoding.UTF8.GetBytes(text);
-            uint[] data = new uint[input.Length / 4];
+            
+            uint[] data = new uint[4];
             data[0] = Convert.ToUInt32(text.Substring(0, 8), 16);
             data[1] = Convert.ToUInt32(text.Substring(8, 8), 16);
             data[2] = Convert.ToUInt32(text.Substring(16, 8), 16);
