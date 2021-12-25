@@ -164,7 +164,7 @@ namespace Security
             int i;
             for (i = _key.Length - 1; i > 0; i--)
             {
-                l[i / u] = BitOperations.RotateLeft(l[u / i], 8) + _key[i];
+                l[i / u] = BitOperations.RotateLeft(l[i/u], 8) + _key[i];
             }
 
             int t;
