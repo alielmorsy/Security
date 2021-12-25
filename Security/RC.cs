@@ -18,6 +18,7 @@ namespace Security
             this._key = key;
             this._wordLength = wordLength;
             this._roundOfRotation = roundOfRotation;
+            InitKey(true);
         }
 
 
@@ -194,7 +195,8 @@ namespace Security
                 i = (i + i) % l.Length;
                 j = (j + 1) % t;
             }
-
+            Console.WriteLine(s.Length);
+            Console.WriteLine(String.Join("-",s));
             return s;
         }
 
