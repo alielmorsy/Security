@@ -48,7 +48,7 @@ namespace Security
             for (int i = _roundOfRotation; i >= 1; i--)
             {
                 B = (BitOperations.RotateRight(B - S[2 * i + 1], (int)A)) ^ A;
-                A = (BitOperations.RotateRight(A - S[2 * i + 1], (int)B)) ^ B;
+                A = (BitOperations.RotateRight(A - S[2 * i ], (int)B)) ^ B;
             }
 
             B -= S[1];
@@ -136,7 +136,7 @@ namespace Security
                 final[i] = (byte)((data[i / 4] >> (i % 4) * 8) & 0xff);
             }
 
-            return System.Text.Encoding.Default.GetString(final);
+            return Encoding.Default.GetString(final);
         }
 
         private uint[] CreateRegisters(string text)
