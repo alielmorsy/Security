@@ -72,7 +72,7 @@ namespace Security
             for (int i = 1; i <= _roundOfRotation; i++)
             {
                 t = BitOperations.RotateLeft(B * (2 * B + 1), lgw);
-                u = BitOperations.RotateLeft(D * 2 * D + 1, lgw);
+                u = BitOperations.RotateLeft(D * (2 * D + 1), lgw);
 
                 A = BitOperations.RotateLeft(A ^ t, (int)u) + s[2 * i];
                 C = BitOperations.RotateLeft(C ^ u, (int)t) + s[2 * i + 1];
