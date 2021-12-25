@@ -49,7 +49,7 @@ namespace Security
             for (int i = _roundOfRotation; i >= 1; i--)
             {
                 B = (BitOperations.RotateRight(B - S[2 * i + 1], (int)A)) ^ A;
-                A = (BitOperations.RotateRight(A - S[2 * i ], (int)B)) ^ B;
+                A = (BitOperations.RotateRight(A - S[2 * i], (int)B)) ^ B;
             }
 
             B -= S[1];
@@ -91,14 +91,9 @@ namespace Security
             data[1] = B;
             data[2] = C;
             data[3] = D;
-            byte[] final = new byte[text.Length];
 
-            for (int i = 0; i < final.Length; i++)
-            {
-                final[i] = (byte)((data[i / 4] >> (i % 4) * 8) & 0xff);
-            }
 
-            return System.Text.Encoding.Default.GetString(final);
+            return $"{A:x}{B:x}{C:x}{D:x}".ToUpper();
         }
 
         public string DecryptRC6(string text)
@@ -130,28 +125,25 @@ namespace Security
             data[1] = B;
             data[2] = C;
             data[3] = D;
-            byte[] final = new byte[text.Length];
-
-            for (int i = 0; i < final.Length; i++)
-            {
-                final[i] = (byte)((data[i / 4] >> (i % 4) * 8) & 0xff);
-            }
-
-            return Encoding.Default.GetString(final);
+            return $"{A:x}{B:x}{C:x}{D:x}".ToUpper();
         }
 
         private uint[] CreateRegisters(string text)
         {
             byte[] input = Encoding.UTF8.GetBytes(text);
             uint[] data = new uint[input.Length / 4];
-            int off = 0;
-            for (int i = 0; i < data.Length; i++)
-            {
-                data[i] = (uint)((input[off++] & 0xff) |
-                                 ((input[off++] & 0xff) << 8) |
-                                 ((input[off++] & 0xff) << 16) |
-                                 ((input[off++] & 0xff) << 24));
-            }
+            data[0] = Convert.ToUInt32(text.Substring(0, 8), 16);
+            data[1] = Convert.ToUInt32(text.Substring(8, 8), 16);
+            data[2] = Convert.ToUInt32(text.Substring(16, 8), 16);
+            data[3] = Convert.ToUInt32(text.Substring(24, 8), 16);
+            // int off = 0;
+            // for (int i = 0; i < data.Length; i++)
+            // {
+            //     data[i] = (uint)((input[off++] & 0xff) |
+            //                      ((input[off++] & 0xff) << 8) |
+            //                      ((input[off++] & 0xff) << 16) |
+            //                      ((input[off++] & 0xff) << 24));
+            // }
 
             return data;
         }
@@ -160,21 +152,26 @@ namespace Security
         {
             uint P = Odd((Math.E - 2) * Math.Pow(2, _wordLength));
             uint Q = Odd((GoldenRatio - 1) * Math.Pow(2, _wordLength));
+
             int u = _wordLength / 8;
             uint[] l = new uint[_key.Length / u];
             int i;
             for (i = _key.Length - 1; i > 0; i--)
             {
-                l[i / u] = BitOperations.RotateLeft(l[i/u], 8) + _key[i];
+                l[i / u] = BitOperations.RotateLeft(l[i / u], 8) + _key[i];
             }
 
             int t;
             if (isRc5)
+            {
                 t = (_roundOfRotation + 1) * 2;
+            }
+
             else
             {
                 t = _roundOfRotation * 2 + 4;
             }
+
 
             uint[] s = new uint[t];
             s[0] = P;
@@ -184,19 +181,19 @@ namespace Security
             }
 
             //Mixing Keys
-            i = 0; //for l array
-            int j = 0; // for s array
+            i = 0; //for s array
+            int j = 0; // for l array
             uint A = 0;
             uint B = 0; //A for S, B for L
-            for (int k = 0; k < 3 * Math.Max((uint)t, l.Length); k++)
+            for (int k = 0; k < 3 * Math.Max(t, l.Length); k++)
             {
-                A = s[j] = BitOperations.RotateLeft(s[i] + A + B, 3);
-                B = l[i] = BitOperations.RotateLeft(l[i] + A + B, (int)(A + B));
-                i = (i + 1) % l.Length;
-                j = (j + 1) % t;
+                A = s[i] = BitOperations.RotateLeft(s[i] + A + B, 3);
+                B = l[j] = BitOperations.RotateLeft(l[j] + A + B, (int)(A + B));
+                i = (i + 1) % t;
+                j = (j + 1) % l.Length;
             }
-            Console.WriteLine(s.Length);
-            Console.WriteLine(String.Join("-",s));
+
+
             return s;
         }
 
